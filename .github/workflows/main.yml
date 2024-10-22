@@ -27,7 +27,7 @@ jobs:
 
   build:
     name: Build Docker Image
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: lint  # Ce job ne s'exécute qu'après le job 'lint'
 
     steps:
@@ -40,7 +40,7 @@ jobs:
 
   push:
     name: Push Docker Image to Docker Hub
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: build  # Ce job ne s'exécute qu'après le job 'build'
 
     steps:
