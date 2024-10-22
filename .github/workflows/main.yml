@@ -34,7 +34,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t your-dockerhub-username/your-image-name:latest .
+          docker build -t JeremieWarconsin/nginx:latest .
 
   push:
     name: Push Docker Image to Docker Hub
