@@ -1,5 +1,7 @@
-name: PHP Lint, Build and Push
 
+
+
+name: PHP Lint, Build and Push
 on:
   push:
     branches:
@@ -50,4 +52,4 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push your-dockerhub-username/your-image-name:latest
+          docker push JeremieWarconsin/nginx:latest
