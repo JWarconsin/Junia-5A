@@ -71,6 +71,5 @@ jobs:
           fi
           ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             docker pull jeremiewarconsin/nginx:latest
-            docker run -d --name nginx-SSH -p 81:80 jeremiewarconsin/nginx:latest
-
+            docker run -d --name nginx-SSH -p 80:80 jeremiewarconsin/nginx:latest
           EOF
