@@ -1,5 +1,5 @@
+name: CI/CD Pipeline
 
-name: PHP Lint, Build and Push
 on:
   push:
     branches:
@@ -7,26 +7,23 @@ on:
 
 jobs:
   lint:
-    name: Run PHP Lint
+    name: Lint PHP files
     runs-on: [self-hosted]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install PHP
-        run: sudo apt-get install php-cli
-
-      - name: Run PHP lint on all PHP files
+      - name: Run PHP Lint
         run: |
           for file in $(git ls-files "*.php"); do
-            php -l $file;
+            php -l "$file"
           done
 
   build:
     name: Build Docker Image
     runs-on: [self-hosted]
-    needs: lint  # Ce job ne s'exécute qu'après le job 'lint'
+    needs: lint
 
     steps:
       - name: Checkout repository
@@ -34,12 +31,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t jeremiewarconsin/nginx:latest .
+          docker build -t jeremiewarconsin/nginx-junia:latest .
 
   push:
     name: Push Docker Image to Docker Hub
     runs-on: [self-hosted]
-    needs: build  # Ce job ne s'exécute qu'après le job 'build'
+    needs: build
 
     steps:
       - name: Checkout repository
@@ -50,8 +47,9 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push jeremiewarconsin/nginx:latest
- deploy:
+          docker push jeremiewarconsin/nginx-junia:latest
+
+  deploy:
     name: Deploy to Remote Server
     runs-on: [self-hosted]
     needs: push
@@ -72,4 +70,3 @@ jobs:
           ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             docker pull jeremiewarconsin/nginx-junia:latest
             docker run -d --name nginx-SSH -p 80:80 jeremiewarconsin/nginx-junia:latest
-          EOF
