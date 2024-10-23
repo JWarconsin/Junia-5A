@@ -1,6 +1,4 @@
 
-
-
 name: PHP Lint, Build and Push
 on:
   push:
@@ -53,3 +51,25 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: |
           docker push jeremiewarconsin/nginx:latest
+ deploy:
+    name: Deploy to Remote Server
+    runs-on: [self-hosted]
+    needs: push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Pull Docker images and start containers
+        run: |
+          if [ "$(docker ps -q -f name=nginx-SSH)" ]; then
+              echo "Container 'nginx' is running. Stopping and removing it."
+              docker stop nginx-SSH
+              docker rm nginx-SSH
+          else
+              echo "Container 'nginx' is not running."
+          fi
+          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+            docker pull jeremiewarconsin/nginx-junia:latest
+            docker run -d --name nginx-SSH -p 80:80 jeremiewarconsin/nginx-junia:latest
+          EOF
